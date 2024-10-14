@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import AboutUsPage from './components/AboutUsPage';
+import ContactUsPage from './components/ContactUsPage';
+import RegisterPage from './components/RegisterPage';
+import LoginPage from './components/LoginPage';
+import CustomNavbar from './components/CustomNavbar';
+import StudentDashboard from './components/StudentDetailsAdd';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App d-flex flex-column min-vh-100">
+        <CustomNavbar></CustomNavbar>
+        <main className="flex-grow-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/student-details-add" element={<StudentDashboard></StudentDashboard>} />
+        </Routes>
+        </main>
+        <footer className="footer mt-auto py-3 bg-dark text-light">
+        <div className="container text-center">
+          <p className="mb-0">&copy; 2023 Student Dropout Analysis. All rights reserved.</p>
+        </div>
+      </footer>
+      </div>
+    </Router>
   );
 }
 
