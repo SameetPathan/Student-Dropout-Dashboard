@@ -446,7 +446,18 @@ const AdminDashboard = () => {
               </Modal>
             </Tab>
 
-         
+            <Tab eventKey="analytics" title="Analytics">
+              <h4 className="mb-4">Student Dropout Analysis</h4>
+
+              <Button
+                variant="primary"
+                onClick={handleGenerateCharts}
+                className="mb-4"
+              >
+                Generate Charts
+              </Button>
+
+            </Tab>
           </Tabs>
         </Card.Body>
       </Card>
