@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Form, Button, Toast, ToastContainer, Image } from 'react-bootstrap';
 import { FaEnvelope, FaLock, FaSignInAlt, FaUser } from 'react-icons/fa';
 import { getDatabase, ref, get } from 'firebase/database';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    userType: 'Student', // Default value
+    userType: 'Student',
   });
+
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastVariant, setToastVariant] = useState('success');
@@ -34,13 +35,33 @@ const LoginPage = () => {
           if (
             userData.email === formData.email &&
             userData.password === formData.password &&
-            userData.userType === formData.userType // Check user type
+            userData.userType === formData.userType
           ) {
             userFound = true;
+            
+            // Call the onLogin function passed from App.js
+            onLogin({ 
+              email: formData.email,
+              userType: formData.userType,
+              id: childSnapshot.key
+            });
+
             showToastMessage('Login successful!', 'success');
-            navigate('/student-details-add'); 
-            // Handle successful login (e.g., set session or redirect to dashboard)
-            console.log('Login successful!');
+
+            // Redirect based on user type
+            switch (formData.userType) {
+              case 'Student':
+                navigate('/student-dashboard');
+                break;
+              case 'School':
+                navigate('/school-dashboard');
+                break;
+              case 'Admin':
+                navigate('/admin-dashboard');
+                break;
+              default:
+                navigate('/');
+            }
             return;
           }
         });
@@ -53,6 +74,7 @@ const LoginPage = () => {
       }
     } catch (error) {
       showToastMessage('An error occurred during login.', 'danger');
+      console.error('Login error:', error);
     }
   };
 
@@ -66,7 +88,7 @@ const LoginPage = () => {
     <div className="container mt-5">
       <div className="row justify-content-center align-items-center">
         <div className="col-md-6 d-none d-md-block">
-          <Image src="login.jpg" alt="Login" fluid rounded className="" />
+          <Image src="/login.jpg" alt="Login" fluid rounded />
         </div>
         <div className="col-md-6">
           <div className="card shadow-lg">
@@ -77,7 +99,9 @@ const LoginPage = () => {
               </h2>
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label><FaEnvelope className="me-2 text-primary" />Email</Form.Label>
+                  <Form.Label>
+                    <FaEnvelope className="me-2 text-primary" />Email
+                  </Form.Label>
                   <Form.Control
                     type="email"
                     name="email"
@@ -88,7 +112,9 @@ const LoginPage = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label><FaLock className="me-2 text-primary" />Password</Form.Label>
+                  <Form.Label>
+                    <FaLock className="me-2 text-primary" />Password
+                  </Form.Label>
                   <Form.Control
                     type="password"
                     name="password"
@@ -99,7 +125,9 @@ const LoginPage = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label><FaUser className="me-2 text-primary" />User Type</Form.Label>
+                  <Form.Label>
+                    <FaUser className="me-2 text-primary" />User Type
+                  </Form.Label>
                   <Form.Select
                     name="userType"
                     value={formData.userType}
@@ -107,7 +135,7 @@ const LoginPage = () => {
                     required
                   >
                     <option value="Student">Student</option>
-                    <option value="College">College</option>
+                    <option value="School">School</option>
                     <option value="Admin">Admin</option>
                   </Form.Select>
                 </Form.Group>
@@ -116,7 +144,7 @@ const LoginPage = () => {
                 </Button>
               </Form>
               <div className="text-center mt-3">
-                <a href="#" className="text-decoration-none">Forgot Password?</a>
+                <a href="/forgot-password" className="text-decoration-none">Forgot Password?</a>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { FaUsers, FaChartLine, FaHandshake } from 'react-icons/fa';
 const AboutUsPage = () => {
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">About Our Project</h1>
+      <h1 className="text-center mb-4"></h1>
       <div className="row">
         <div className="col-md-6">
           <img

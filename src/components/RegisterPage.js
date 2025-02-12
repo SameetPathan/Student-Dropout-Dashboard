@@ -11,7 +11,7 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     userType: 'Student', // Default value
-    collegeName: '',
+    SchoolName: '',
   });
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -45,7 +45,7 @@ const RegisterPage = () => {
           password: '',
           confirmPassword: '',
           userType: 'Student', // Reset default
-          collegeName: '',
+          SchoolName: '',
         });
       } else {
         showToastMessage('Registration failed. Please try again.', 'danger');
@@ -93,21 +93,20 @@ const RegisterPage = () => {
                   required
                 >
                   <option value="Student">Student</option>
-                  <option value="College">College</option>
-                  <option value="Admin">Admin</option>
+                  <option value="School">School</option>
                 </Form.Select>
               </Form.Group>
 
-              {formData.userType === 'College' && (
+              {formData.userType === 'School' && (
                 <Form.Group className="mb-3">
-                  <Form.Label><FaUniversity className="me-2 text-primary" />College Name</Form.Label>
+                  <Form.Label><FaUniversity className="me-2 text-primary" />School Name</Form.Label>
                   <Form.Control
                     type="text"
-                    name="collegeName"
-                    value={formData.collegeName}
+                    name="SchoolName"
+                    value={formData.SchoolName}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your college name"
+                    placeholder="Enter your School name"
                   />
                 </Form.Group>
               )}

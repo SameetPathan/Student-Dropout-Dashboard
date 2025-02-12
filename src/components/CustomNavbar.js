@@ -1,40 +1,57 @@
+// components/CustomNavbar.js
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import { FaHome, FaInfoCircle, FaChartBar, FaMapMarkedAlt, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
-import '../Navbar.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const CustomNavbar = () => {
+const CustomNavbar = ({ navItems, isAuthenticated, user, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout();
+    navigate('/');
+  };
+
   return (
-    <Navbar bg="light" variant="light" expand="lg" className="custom-navbar">
+    <Navbar bg="dark" variant="dark" expand="lg" className="mb-3">
       <Container>
-        <Navbar.Brand as={Link} to="/" className="brand">
-          <img
-            src="dropout.png" 
-            width="30"
-            height="30"
-            className="d-inline-block align-top mr-2"
-            alt="Student Dropout Analysis Logo"
-          />
-          <span style={{color:"green"}}>Student Dropout Analysis</span>
+        {/* Logo/Brand on the left */}
+        <Navbar.Brand as={Link} to="/" className="me-auto">
+          Student Dropout Analysis
         </Navbar.Brand>
+        
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        
+        {/* All navigation items aligned to the right */}
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/" className="nav-item">
-              <FaHome className="nav-icon" /> Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/about" className="nav-item">
-              <FaInfoCircle className="nav-icon" /> About
-            </Nav.Link>
-           
-           
-            <Nav.Link as={Link} to="/register" className="nav-item">
-              <FaUserPlus className="nav-icon" /> Register
-            </Nav.Link>
-            <Nav.Link as={Link} to="/login" className="nav-item">
-              <FaSignInAlt className="nav-icon" /> Login
-            </Nav.Link>
+          <Nav className="ms-auto align-items-center">
+            {/* Navigation Items */}
+            {navItems.map((item, index) => (
+              <Nav.Link
+                key={index}
+                as={Link}
+                to={item.path}
+                className="px-3"
+              >
+                {item.label}
+              </Nav.Link>
+            ))}
+            
+            {/* User Welcome and Logout Button */}
+            {isAuthenticated && (
+              <>
+                <span className="navbar-text text-light px-3">
+                  Welcome, {user?.userType}
+                </span>
+                <Button
+                  variant="outline-light"
+                  onClick={handleLogout}
+                  className="ms-3"
+                >
+                  Logout
+                </Button>
+              </>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
