@@ -446,76 +446,7 @@ const AdminDashboard = () => {
               </Modal>
             </Tab>
 
-            <Tab eventKey="analytics" title="Analytics">
-              <h4 className="mb-4">Student Dropout Analysis</h4>
-
-              <Button
-                variant="primary"
-                onClick={handleGenerateCharts}
-                className="mb-4"
-              >
-                Generate Charts
-              </Button>
-
-              <Row>
-                {chartData.map((data, index) => (
-                  <Col md={6} key={index}>
-                    <Card className="mb-4">
-                      <Card.Body>
-                        <h5 className="text-center">
-                          {data.category}
-                        </h5>
-                        {data.category === 'Year' ||
-                        data.category === 'Class' ? (
-                          <BarChart width={400} height={300} data={[{ ...data }]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="category" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          {yearOptions.map((year) => (
-                            <Bar key={year} dataKey={year} fill={getChartColors(year)} />
-                          ))}
-                        </BarChart>
-                        
-                        ) : (
-                          <PieChart width={400} height={400}>
-                            <Pie
-                              data={Object.entries(data)
-                                .filter(
-                                  ([key]) => key !== 'category'
-                                )
-                                .map(([name, value]) => ({
-                                  name,
-                                  value,
-                                }))}
-                              cx="50%"
-                                cy="50%"
-                                outerRadius={80}
-                                fill="#8884d8"
-                                label
-                            >
-                              {data.category !== 'Year' &&
-                                data.category !== 'Class' &&
-                                Object.entries(data)
-                                  .filter(([key]) => key !== 'category')
-                                  .map(([name, value], index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={getChartColors(index)}
-                                    />
-                                  ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                          </PieChart>
-                        )}
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Tab>
+         
           </Tabs>
         </Card.Body>
       </Card>
