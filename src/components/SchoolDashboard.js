@@ -1,8 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Tab, Tabs, Form, Button, Table, Container, Row, Col, Card, Modal } from 'react-bootstrap';
-import { getDatabase, ref, push, get, remove, update, set } from 'firebase/database';
-import { Toast, ToastContainer } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaEnvelope } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import {
+  Tab,
+  Tabs,
+  Form,
+  Button,
+  Table,
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Badge,
+} from "react-bootstrap";
+import {
+  getDatabase,
+  ref,
+  push,
+  get,
+  remove,
+  update,
+  set,
+} from "firebase/database";
+import { Toast, ToastContainer } from "react-bootstrap";
+import {
+  FaEdit,
+  FaTrash,
+  FaEnvelope,
+  FaGraduationCap,
+  FaUsers,
+  FaUserPlus,
+  FaChartLine,
+} from "react-icons/fa";
 
 const SchoolDashboard = () => {
   const [key, setKey] = useState("add");
@@ -32,9 +60,8 @@ const SchoolDashboard = () => {
   });
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from(
-    { length: currentYear - 1979 },
-    (_, i) => (currentYear - i).toString()
+  const yearOptions = Array.from({ length: currentYear - 1979 }, (_, i) =>
+    (currentYear - i).toString()
   );
 
   const classOptions = Array.from({ length: 8 }, (_, i) => `Class ${i + 3}`);
@@ -171,11 +198,11 @@ const SchoolDashboard = () => {
         [studentId]: [
           ...(prevMessages[studentId] || []),
           {
-            id: Date.now().toString(), 
+            id: Date.now().toString(),
             studentId: studentId,
             studentName: selectedStudent.fullName,
             message: messageText,
-            timestamp: Date.now(), 
+            timestamp: Date.now(),
             sender: "school",
             read: false,
           },
@@ -192,10 +219,7 @@ const SchoolDashboard = () => {
   const handleDelete = async () => {
     try {
       const db = getDatabase();
-      const studentRef = ref(
-        db,
-        `StudentDropOut/studentDetails/${deleteId}`
-      );
+      const studentRef = ref(db, `StudentDropOut/studentDetails/${deleteId}`);
       await remove(studentRef);
       showToastMessage("Student details deleted successfully!");
       fetchStudentData();
@@ -240,337 +264,529 @@ const SchoolDashboard = () => {
   };
 
   return (
-    <Container>
-      <Card className="shadow-sm">
-        <Card.Body>
-          <Tabs
-            id="school-dashboard-tabs"
-            activeKey={key}
-            onSelect={(k) => setKey(k)}
-            className="mb-4"
-          >
-
- <Tab
-              eventKey="add"
-              title={editingId ? "Edit Student Details" : "Add Student Details"}
-            >
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Full Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Phone Number</Form.Label>
-                      <Form.Control
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>School Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="schoolName"
-                        value={formData.schoolName}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Class</Form.Label>
-                      <Form.Select
-                        name="class"
-                        value={formData.class}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Class</option>
-                        {classOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Year</Form.Label>
-                      <Form.Select
-                        name="year"
-                        value={formData.year}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Year</option>
-                        {yearOptions.map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  {/* ... (other form fields remain the same) ... */}
-                </Row>
-
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Address</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Family Member Count</Form.Label>
-                      <Form.Control
-                        type="number"
-                        name="familyMemberCount"
-                        value={formData.familyMemberCount}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Father's Occupation</Form.Label>
-                      <Form.Select
-                        name="fatherOccupation"
-                        value={formData.fatherOccupation}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Occupation</option>
-                        {occupationOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Reason for Dropout</Form.Label>
-                      <Form.Select
-                        name="reasonForDropout"
-                        value={formData.reasonForDropout}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Reason</option>
-                        {reasonOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <div className="d-flex gap-2">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="flex-grow-1"
-                  >
-                    {editingId ? "Update" : "Submit"}
-                  </Button>
-                  {editingId && (
-                    <Button variant="secondary" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </Form>
-            </Tab>
-
-            <Tab eventKey="view" title="View Students">
-            <div className="table-responsive">
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Class</th>
-                    <th>Year</th>
-                    <th>Reason for Dropout</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {studentData.map((student) => (
-                    <tr key={student.id}>
-                      <td>{student.fullName}</td>
-                      <td>{student.class}</td>
-                      <td>{student.year}</td>
-                      <td>{student.reasonForDropout}</td>
-                      <td>{student.phoneNumber}</td>
-                      <td>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => openMessageModal(student)}
-                        >
-                          <FaEnvelope /> Message
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => {
-                            setDeleteId(student.id);
-                            setShowDeleteModal(true);
-                          }}
-                        >
-                          <FaTrash /> Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          </Tab>
-
-
-           
-            
-          </Tabs>
-        </Card.Body>
-      </Card>
-
-      {/* Message Modal */}
-      <Modal
-      show={showMessageModal}
-      onHide={() => setShowMessageModal(false)}
+    <div
+      className="school-dashboard min-vh-100 py-4"
+      style={{
+        background: "linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)",
+      }}
     >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          Messages - {selectedStudent?.fullName}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className="message-list">
-          {selectedStudent &&
-            messages[selectedStudent.id]?.map((message) => (
-              <div
-                key={message.id}
-                className={`message ${
-                  message.sender === "school" ? "sent" : "received"
-                }`}
+      <Container>
+        {/* Dashboard Header */}
+        <div className="mb-4">
+          <h2 className="fw-bold text-primary mb-1">School Dashboard</h2>
+          <p className="text-muted">
+            Manage and monitor student dropout information
+          </p>
+        </div>
+
+        {/* Stats Cards */}
+        <Row className="g-4 mb-4">
+          <Col md={4}>
+            <Card className="border-0 shadow-sm hover-card">
+              <Card.Body>
+                <div className="d-flex align-items-center">
+                  <div className="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                    <FaUsers className="text-primary" size={24} />
+                  </div>
+                  <div>
+                    <h6 className="mb-1">Total Students</h6>
+                    <h3 className="mb-0 fw-bold">{studentData.length}</h3>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Main Content */}
+        <Card className="border-0 shadow-sm">
+          <Card.Body>
+            <Tabs
+              id="school-dashboard-tabs"
+              activeKey={key}
+              onSelect={(k) => setKey(k)}
+              className="mb-4 nav-tabs-custom"
+            >
+              {/* Add Student Tab */}
+              <Tab
+                eventKey="add"
+                title={
+                  <span>
+                    <FaUserPlus className="me-2" />
+                    {editingId ? "Edit Student" : "Add Student"}
+                  </span>
+                }
               >
-                <span>{message.message}</span>
-                <br />
-                <small className="text-muted">
-                  {new Date(message.timestamp).toLocaleString()}
-                </small>
-              </div>
-            ))}
-        </div>
-        <div className="input-group mt-3">
-          <Form.Control
-            as="textarea"
-            rows={2}
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            placeholder="Type your message..."
-          />
-          <Button
-            variant="primary"
-            onClick={() =>
-              handleMessageSubmit(selectedStudent.id)
-            }
-          >
-            Send
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>
+                <Form onSubmit={handleSubmit} className="p-2">
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Full Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="fullName"
+                          value={formData.fullName}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">
+                          Phone Number
+                        </Form.Label>
+                        <Form.Control
+                          type="tel"
+                          name="phoneNumber"
+                          value={formData.phoneNumber}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
 
-      {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Remove</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to remove this student from your dashboard?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Remove
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
 
-    <ToastContainer position="top-end" className="p-3">
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Class</Form.Label>
+                        <Form.Select
+                          name="class"
+                          value={formData.class}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Class</option>
+                          {classOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Year</Form.Label>
+                        <Form.Select
+                          name="year"
+                          value={formData.year}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Year</option>
+                          {yearOptions.map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">
+                          Father's Occupation
+                        </Form.Label>
+                        <Form.Select
+                          name="fatherOccupation"
+                          value={formData.fatherOccupation}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Occupation</option>
+                          {occupationOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">
+                          Reason for Dropout
+                        </Form.Label>
+                        <Form.Select
+                          name="reasonForDropout"
+                          value={formData.reasonForDropout}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Reason</option>
+                          {reasonOptions.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Address</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          name="address"
+                          value={formData.address}
+                          onChange={handleChange}
+                          required
+                          className="border-0 shadow-sm rounded"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="d-flex gap-2 mt-4">
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="rounded-pill px-4 py-2 flex-grow-1"
+                    >
+                      {editingId ? "Update Student" : "Add Student"}
+                    </Button>
+                    {editingId && (
+                      <Button
+                        variant="outline-secondary"
+                        onClick={resetForm}
+                        className="rounded-pill px-4 py-2"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
+                </Form>
+              </Tab>
+
+              {/* View Students Tab */}
+              <Tab
+                eventKey="view"
+                title={
+                  <span>
+                    <FaUsers className="me-2" />
+                    View Students
+                  </span>
+                }
+              >
+                <div className="table-responsive">
+                  <Table hover className="align-middle">
+                    <thead className="bg-light">
+                      <tr>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Year</th>
+                        <th>Dropout Reason</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {studentData.map((student) => (
+                        <tr key={student.id}>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <div
+                                className="rounded-circle bg-primary bg-opacity-10 p-2 me-2 text-center"
+                                style={{ width: "40px", height: "40px" }}
+                              >
+                                <span className="fw-bold">
+                                  {student.fullName.charAt(0)}
+                                </span>
+                              </div>
+                              <span>{student.fullName}</span>
+                            </div>
+                          </td>
+                          <td>{student.class}</td>
+                          <td>{student.year}</td>
+                          <td>
+                            <Badge
+                              bg="warning"
+                              text="dark"
+                              className="rounded-pill px-3 py-2"
+                            >
+                              {student.reasonForDropout}
+                            </Badge>
+                          </td>
+                          <td>{student.phoneNumber}</td>
+                          <td>
+                            <Button
+                              variant="link"
+                              className="text-primary p-0 me-3"
+                              onClick={() => openMessageModal(student)}
+                            >
+                              <FaEnvelope size={18} />
+                            </Button>
+                            <Button
+                              variant="link"
+                              className="text-danger p-0"
+                              onClick={() => {
+                                setDeleteId(student.id);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              <FaTrash size={18} />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </Tab>
+            </Tabs>
+          </Card.Body>
+        </Card>
+
+        {/* Message Modal */}
+        <Modal
+          show={showMessageModal}
+          onHide={() => setShowMessageModal(false)}
+          size="lg"
+          centered
         >
-          <Toast.Header>
-            <strong className="me-auto">Notification</strong>
-          </Toast.Header>
-          <Toast.Body>{toastMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
-    </Container>
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title>
+              <div className="d-flex align-items-center">
+                <div className="rounded-circle bg-primary bg-opacity-10 p-2 me-2">
+                  <FaEnvelope className="text-primary" />
+                </div>
+                Messages - {selectedStudent?.fullName}
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="px-4">
+            <div
+              className="message-container p-3 bg-light rounded mb-3"
+              style={{ maxHeight: "400px", overflowY: "auto" }}
+            >
+              {selectedStudent &&
+                messages[selectedStudent.id]?.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`message-bubble mb-3 ${
+                      message.sender === "school" ? "sent" : "received"
+                    }`}
+                  >
+                    <div
+                      className={`p-3 rounded-3 ${
+                        message.sender === "school"
+                          ? "bg-primary text-white"
+                          : "bg-white border"
+                      }`}
+                    >
+                      <p className="mb-1">{message.message}</p>
+                      <small
+                        className={
+                          message.sender === "school"
+                            ? "text-white-50"
+                            : "text-muted"
+                        }
+                      >
+                        {new Date(message.timestamp).toLocaleString()}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className="message-input">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message..."
+                className="border-0 shadow-sm mb-2"
+              />
+              <Button
+                variant="primary"
+                className="rounded-pill px-4"
+                onClick={() => handleMessageSubmit(selectedStudent.id)}
+              >
+                Send Message
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+
+        {/* Delete Modal */}
+        <Modal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+        >
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title>Confirm Removal</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to remove this student from your dashboard?
+          </Modal.Body>
+          <Modal.Footer className="border-0">
+            <Button
+              variant="outline-secondary"
+              className="rounded-pill"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              className="rounded-pill"
+              onClick={handleDelete}
+            >
+              Remove Student
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Toast */}
+        <ToastContainer position="top-end" className="p-3">
+          <Toast
+            onClose={() => setShowToast(false)}
+            show={showToast}
+            delay={3000}
+            autohide
+            className="border-0 shadow-sm"
+          >
+            <Toast.Header closeButton={false}>
+              <strong className="me-auto">Notification</strong>
+            </Toast.Header>
+            <Toast.Body>{toastMessage}</Toast.Body>
+          </Toast>
+        </ToastContainer>
+
+        <style jsx>{`.hover-card {
+          transition: transform 0.2s ease;
+        }
+        
+        .hover-card:hover {
+          transform: translateY(-5px);
+        }
+        
+        .nav-tabs-custom .nav-link {
+          border: none;
+          color: #6c757d;
+          padding: 1rem 1.5rem;
+          font-weight: 500;
+          position: relative;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+          color: #0d6efd;
+          background: none;
+        }
+        
+        .nav-tabs-custom .nav-link.active::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: #0d6efd;
+        }
+        
+        .message-container {
+          scrollbar-width: thin;
+          scrollbar-color: #dee2e6 #ffffff;
+        }
+        
+        .message-container::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .message-container::-webkit-scrollbar-track {
+          background: #ffffff;
+        }
+        
+        .message-container::-webkit-scrollbar-thumb {
+          background-color: #dee2e6;
+          border-radius: 3px;
+        }
+        
+        .message-bubble {
+          max-width: 80%;
+        }
+        
+        .message-bubble.sent {
+          margin-left: auto;
+        }
+        
+        .message-bubble.received {
+          margin-right: auto;
+        }
+        
+        .table-responsive {
+          scrollbar-width: thin;
+          scrollbar-color: #dee2e6 #ffffff;
+        }
+        
+        .table-responsive::-webkit-scrollbar {
+          height: 6px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-track {
+          background: #ffffff;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb {
+          background-color: #dee2e6;
+          border-radius: 3px;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+          border-color: #86b7fe;
+        }
+        
+        .school-dashboard {
+          min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+          .nav-tabs-custom .nav-link {
+            padding: 0.75rem 1rem;
+          }
+          
+          .message-bubble {
+            max-width: 90%;
+          }
+          `}</style>
+      </Container>
+    </div>
   );
 };
 

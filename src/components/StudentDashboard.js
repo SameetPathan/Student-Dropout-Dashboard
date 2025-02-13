@@ -10,10 +10,19 @@ import {
   Col,
   Card,
   Modal,
+  Badge
 } from "react-bootstrap";
 import { getDatabase, ref, push, get, remove, update } from "firebase/database";
 import { Toast, ToastContainer } from "react-bootstrap";
-import { FaEdit, FaTrash,FaEnvelope } from "react-icons/fa";
+import { 
+  FaEdit, 
+  FaTrash, 
+  FaEnvelope, 
+  FaUserGraduate, 
+  FaUserPlus, 
+  FaUsers,
+  FaSchool 
+} from "react-icons/fa";
 
 const StudentDashboard = () => {
   const [key, setKey] = useState("add");
@@ -272,336 +281,522 @@ const StudentDashboard = () => {
   };
 
   return (
-    <Container>
-      <Card className="shadow-sm">
-        <Card.Body>
-          <Tabs
-            id="student-dashboard-tabs"
-            activeKey={key}
-            onSelect={(k) => setKey(k)}
-            className="mb-4"
-          >
-            <Tab
-              eventKey="add"
-              title={editingId ? "Edit Student Details" : "Add Student Details"}
+    <div className="student-dashboard min-vh-100 py-4" 
+         style={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)' }}>
+      <Container>
+        {/* Dashboard Header */}
+        <div className="mb-4">
+          <h2 className="fw-bold text-primary mb-1">Student Dashboard</h2>
+          <p className="text-muted">Manage your academic information and communications</p>
+        </div>
+
+
+
+        {/* Main Content */}
+        <Card className="border-0 shadow-sm">
+          <Card.Body>
+            <Tabs
+              id="student-dashboard-tabs"
+              activeKey={key}
+              onSelect={(k) => setKey(k)}
+              className="mb-4 nav-tabs-custom"
             >
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Full Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Phone Number</Form.Label>
-                      <Form.Control
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+              {/* Add/Edit Student Tab */}
+              <Tab 
+                eventKey="add" 
+                title={
+                  <span>
+                    <FaUserPlus className="me-2" />
+                    {editingId ? "Edit Profile" : "Add Profile"}
+                  </span>
+                }
+              >
+                <Form onSubmit={handleSubmit} className="p-2">
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Full Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="fullName"
+                          value={formData.fullName}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Phone Number</Form.Label>
+                        <Form.Control
+                          type="tel"
+                          name="phoneNumber"
+                          value={formData.phoneNumber}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
 
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Email</Form.Label>
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>School Name</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="schoolName"
-                        value={formData.schoolName}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Email</Form.Label>
+                        <Form.Control
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
 
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Class</Form.Label>
-                      <Form.Select
-                        name="class"
-                        value={formData.class}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Class</option>
-                        {classOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Year</Form.Label>
-                      <Form.Select
-                        name="year"
-                        value={formData.year}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Year</option>
-                        {yearOptions.map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  {/* ... (other form fields remain the same) ... */}
-                </Row>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">School Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="schoolName"
+                          value={formData.schoolName}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
 
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Address</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={3}
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Family Member Count</Form.Label>
-                      <Form.Control
-                        type="number"
-                        name="familyMemberCount"
-                        value={formData.familyMemberCount}
-                        onChange={handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Father's Occupation</Form.Label>
-                      <Form.Select
-                        name="fatherOccupation"
-                        value={formData.fatherOccupation}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Occupation</option>
-                        {occupationOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Reason for Dropout</Form.Label>
-                      <Form.Select
-                        name="reasonForDropout"
-                        value={formData.reasonForDropout}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Reason</option>
-                        {reasonOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <div className="d-flex gap-2">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="flex-grow-1"
-                  >
-                    {editingId ? "Update" : "Submit"}
-                  </Button>
-                  {editingId && (
-                    <Button variant="secondary" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </Form>
-            </Tab>
-
-            <Tab eventKey="view" title="View Details">
-              <div className="table-responsive">
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>School</th>
-                      <th>Class</th>
-                      <th>Year</th>
-                      <th>Reason for Dropout</th>
-                      <th>Contact</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {studentData.map((student) => (
-                      <tr key={student.id}>
-                        <td>{student.fullName}</td>
-                        <td>{student.schoolName}</td>
-                        <td>{student.class}</td>
-                        <td>{student.year}</td>
-                        <td>{student.reasonForDropout}</td>
-                        <td>{student.phoneNumber}</td>
-                        <td>
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleEdit(student)}
-                          >
-                            <FaEdit /> Edit
-                          </Button>
-                          <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => openMessageModal(student)}
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Class</Form.Label>
+                        <Form.Select
+                          name="class"
+                          value={formData.class}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
                         >
-                          <FaEnvelope /> Messages
-                        </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => {
-                              setDeleteId(student.id);
-                              setShowDeleteModal(true);
-                            }}
-                          >
-                            <FaTrash /> Delete
-                          </Button>
-                        </td>
+                          <option value="">Select Class</option>
+                          {classOptions.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Year</Form.Label>
+                        <Form.Select
+                          name="year"
+                          value={formData.year}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Year</option>
+                          {yearOptions.map((year) => (
+                            <option key={year} value={year}>{year}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Family Members</Form.Label>
+                        <Form.Control
+                          type="number"
+                          name="familyMemberCount"
+                          value={formData.familyMemberCount}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Father's Occupation</Form.Label>
+                        <Form.Select
+                          name="fatherOccupation"
+                          value={formData.fatherOccupation}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Occupation</option>
+                          {occupationOptions.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Reason for Dropout</Form.Label>
+                        <Form.Select
+                          name="reasonForDropout"
+                          value={formData.reasonForDropout}
+                          onChange={handleChange}
+                          required
+                          className="rounded-pill border-0 shadow-sm"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        >
+                          <option value="">Select Reason</option>
+                          {reasonOptions.map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="fw-medium">Address</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          name="address"
+                          value={formData.address}
+                          onChange={handleChange}
+                          required
+                          className="border-0 shadow-sm rounded"
+                          style={{ padding: "0.75rem 1.25rem" }}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <div className="d-flex gap-2 mt-4">
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="rounded-pill px-4 py-2 flex-grow-1"
+                    >
+                      {editingId ? "Update Profile" : "Add Profile"}
+                    </Button>
+                    {editingId && (
+                      <Button 
+                        variant="outline-secondary"
+                        onClick={resetForm}
+                        className="rounded-pill px-4 py-2"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
+                </Form>
+              </Tab>
+
+              {/* View Details Tab */}
+              <Tab 
+                eventKey="view" 
+                title={
+                  <span>
+                    <FaUsers className="me-2" />
+                    View Details
+                  </span>
+                }
+              >
+                <div className="table-responsive">
+                  <Table hover className="align-middle">
+                    <thead className="bg-light">
+                      <tr>
+                        <th>Student</th>
+                        <th>School</th>
+                        <th>Class</th>
+                        <th>Year</th>
+                        <th>Dropout Reason</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Tab>
-          </Tabs>
-        </Card.Body>
-      </Card>
-
-      {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this student record? This action
-          cannot be undone.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showMessageModal} onHide={() => setShowMessageModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Messages - {selectedStudent?.fullName}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="message-list">
-            {selectedStudent &&
-              messages[selectedStudent.id]?.map((message) => (
-                <div
-                  key={message.id}
-                  className={`message ${
-                    message.sender === "student" ? "sent" : "received"
-                  }`}
-                >
-                  <span>{message.message}</span>
-                  <br />
-                  <small className="text-muted">
-                    {new Date(message.timestamp).toLocaleString()}
-                  </small>
+                    </thead>
+                    <tbody>
+                      {studentData.map((student) => (
+                        <tr key={student.id}>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <div 
+                                className="rounded-circle bg-primary bg-opacity-10 p-2 me-2 text-center"
+                                style={{ width: '40px', height: '40px' }}
+                              >
+                                <span className="fw-bold">{student.fullName.charAt(0)}</span>
+                              </div>
+                              <span>{student.fullName}</span>
+                            </div>
+                          </td>
+                          <td>{student.schoolName}</td>
+                          <td>{student.class}</td>
+                          <td>{student.year}</td>
+                          <td>
+                            <Badge bg="warning" text="dark" className="rounded-pill px-3 py-2">
+                              {student.reasonForDropout}
+                            </Badge>
+                          </td>
+                          <td>{student.phoneNumber}</td>
+                          <td>
+                            <Button
+                              variant="link"
+                              className="text-primary p-0 me-3"
+                              onClick={() => handleEdit(student)}
+                            >
+                              <FaEdit size={18} />
+                            </Button>
+                            <Button
+                              variant="link"
+                              className="text-primary p-0 me-3"
+                              onClick={() => openMessageModal(student)}
+                            >
+                              <FaEnvelope size={18} />
+                            </Button>
+                            <Button
+                              variant="link"
+                              className="text-danger p-0"
+                              onClick={() => {
+                                setDeleteId(student.id);
+                                setShowDeleteModal(true);
+                              }}
+                            >
+                              <FaTrash size={18} />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 </div>
-              ))}
-          </div>
-          <div className="input-group mt-3">
-            <Form.Control
-              as="textarea"
-              rows={2}
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-            />
-            <Button
-              variant="primary"
-              onClick={() =>
-                selectedStudent && handleSendMessage(selectedStudent.id)
-              }
-            >
-              Send
-            </Button>
-          </div>
-        </Modal.Body>
-      </Modal>
+              </Tab>
+            </Tabs>
+          </Card.Body>
+        </Card>
 
-      <ToastContainer position="top-end" className="p-3">
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
+        {/* Message Modal */}
+        <Modal
+          show={showMessageModal}
+          onHide={() => setShowMessageModal(false)}
+          size="lg"
+          centered
         >
-          <Toast.Header>
-            <strong className="me-auto">Notification</strong>
-          </Toast.Header>
-          <Toast.Body>{toastMessage}</Toast.Body>
-        </Toast>
-      </ToastContainer>
-    </Container>
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title>
+              <div className="d-flex align-items-center">
+                <div className="rounded-circle bg-primary bg-opacity-10 p-2 me-2">
+                  <FaEnvelope className="text-primary" />
+                </div>
+                Messages - {selectedStudent?.fullName}
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="px-4">
+            <div className="message-container p-3 bg-light rounded mb-3" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              {selectedStudent &&
+                messages[selectedStudent.id]?.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`message-bubble mb-3 ${message.sender === 'student' ? 'sent' : 'received'}`}
+                  >
+                    <div className={`p-3 rounded-3 ${
+                      message.sender === 'student' 
+                        ? 'bg-primary text-white' 
+                        : 'bg-white border'
+                    }`}>
+                      <p className="mb-1">{message.message}</p>
+                      <small className={message.sender === 'student' ? 'text-white-50' : 'text-muted'}>
+                        {new Date(message.timestamp).toLocaleString()}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div className="message-input">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="border-0 shadow-sm mb-2"
+              />
+              <Button
+                variant="primary"
+                className="rounded-pill px-4"
+                onClick={() => selectedStudent && handleSendMessage(selectedStudent.id)}
+              >
+                Send Message
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+
+        {/* Delete Modal */}
+        <Modal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+        >
+          <Modal.Header closeButton className="border-0">
+            <Modal.Title>
+              <div className="d-flex align-items-center">
+                <div className="rounded-circle bg-danger bg-opacity-10 p-2 me-2">
+                  <FaTrash className="text-danger" />
+                </div>
+                Confirm Deletion
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to remove your profile from the system? This action cannot be undone.
+          </Modal.Body>
+          <Modal.Footer className="border-0">
+            <Button 
+              variant="outline-secondary" 
+              className="rounded-pill"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              className="rounded-pill"
+              onClick={handleDelete}
+            >
+              Delete Profile
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Toast */}
+        <ToastContainer position="top-end" className="p-3">
+          <Toast
+            onClose={() => setShowToast(false)}
+            show={showToast}
+            delay={3000}
+            autohide
+            className="border-0 shadow-sm"
+          >
+            <Toast.Header closeButton={false}>
+              <strong className="me-auto">Notification</strong>
+            </Toast.Header>
+            <Toast.Body>{toastMessage}</Toast.Body>
+          </Toast>
+        </ToastContainer>
+
+        <style jsx>{`
+          .student-dashboard {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+          }
+          
+          .hover-card {
+            transition: transform 0.2s ease;
+          }
+          
+          .hover-card:hover {
+            transform: translateY(-5px);
+          }
+          
+          .nav-tabs-custom .nav-link {
+            border: none;
+            color: #6c757d;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            position: relative;
+          }
+          
+          .nav-tabs-custom .nav-link.active {
+            color: #0d6efd;
+            background: none;
+          }
+          
+          .nav-tabs-custom .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0d6efd;
+          }
+          
+          .message-container {
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #ffffff;
+          }
+          
+          .message-container::-webkit-scrollbar {
+            width: 6px;
+          }
+          
+          .message-container::-webkit-scrollbar-track {
+            background: #ffffff;
+          }
+          
+          .message-container::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 3px;
+          }
+          
+          .message-bubble {
+            max-width: 80%;
+          }
+          
+          .message-bubble.sent {
+            margin-left: auto;
+          }
+          
+          .message-bubble.received {
+            margin-right: auto;
+          }
+          
+          .table-responsive {
+            scrollbar-width: thin;
+            scrollbar-color: #dee2e6 #ffffff;
+          }
+          
+          .table-responsive::-webkit-scrollbar {
+            height: 6px;
+          }
+          
+          .table-responsive::-webkit-scrollbar-track {
+            background: #ffffff;
+          }
+          
+          .table-responsive::-webkit-scrollbar-thumb {
+            background-color: #dee2e6;
+            border-radius: 3px;
+          }
+          
+          .form-control:focus,
+          .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            border-color: #86b7fe;
+          }
+          
+          @media (max-width: 768px) {
+            .nav-tabs-custom .nav-link {
+              padding: 0.75rem 1rem;
+            }
+            
+            .message-bubble {
+              max-width: 90%;
+            }
+          }
+        `}</style>
+      </Container>
+    </div>
   );
 };
 

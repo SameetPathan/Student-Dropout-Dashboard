@@ -92,14 +92,14 @@ function App() {
   return (
     <CookiesProvider>
       <Router>
-        <div className="App d-flex flex-column min-vh-100">
+        <div className="App">
           <CustomNavbar 
             navItems={getNavItems()}
             isAuthenticated={isAuthenticated}
             user={user}
             onLogout={handleLogout}
           />
-          <main className="flex-grow-1 container py-4">
+          <main style={{marginTop:"95px"}}>
             <Routes>
               {/* Home Route - Redirects authenticated users to their dashboard */}
               <Route 
