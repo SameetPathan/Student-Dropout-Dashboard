@@ -105,6 +105,7 @@ const RegisterPage = () => {
                     >
                       <option value="Student">Student</option>
                       <option value="School">School</option>
+   
                     </Form.Select>
                   </div>
 

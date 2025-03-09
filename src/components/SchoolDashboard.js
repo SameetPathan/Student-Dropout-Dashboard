@@ -32,7 +32,7 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 
-const SchoolDashboard = () => {
+const SchoolDashboard = (props) => {
   const [key, setKey] = useState("add");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -87,6 +87,7 @@ const SchoolDashboard = () => {
   ];
 
   useEffect(() => {
+    console.log("user={user}",props.user)
     fetchStudentData();
   }, []);
 
@@ -95,23 +96,27 @@ const SchoolDashboard = () => {
       const db = getDatabase();
       const studentsRef = ref(db, "StudentDropOut/studentDetails");
       const snapshot = await get(studentsRef);
-
+  
       if (snapshot.exists()) {
         const data = [];
         const messagesPromises = [];
-
+  
         snapshot.forEach((childSnapshot) => {
           const student = { id: childSnapshot.key, ...childSnapshot.val() };
-          data.push(student);
-
-          messagesPromises.push(
-            fetchMessages(student.id).then((studentMessages) => ({
-              studentId: student.id,
-              messages: studentMessages,
-            }))
-          );
+          
+          // Only include students added by the current user
+          if (student.addedby === props.user.email) {
+            data.push(student);
+  
+            messagesPromises.push(
+              fetchMessages(student.id).then((studentMessages) => ({
+                studentId: student.id,
+                messages: studentMessages,
+              }))
+            );
+          }
         });
-
+  
         Promise.all(messagesPromises).then((messagesData) => {
           const newMessages = { ...messages };
           messagesData.forEach(({ studentId, messages }) => {
@@ -119,15 +124,15 @@ const SchoolDashboard = () => {
           });
           setMessages(newMessages);
         });
-
+  
         setStudentData(data.reverse());
       } else {
         setStudentData([]);
       }
     } catch (error) {
       showToastMessage("Error fetching student data");
-    }
-  };
+      }
+    };
 
   const fetchMessages = async (studentId) => {
     try {
@@ -160,12 +165,12 @@ const SchoolDashboard = () => {
           db,
           `StudentDropOut/studentDetails/${editingId}`
         );
-        await update(studentRef, formData);
+        await update(studentRef, {...formData,addedby:props.user.email});
         showToastMessage("Student details updated successfully!");
         setEditingId(null);
       } else {
         const studentsRef = ref(db, "StudentDropOut/studentDetails");
-        await push(studentsRef, formData);
+        await push(studentsRef, {...formData,addedby:props.user.email});
         showToastMessage("Student details added successfully!");
       }
 

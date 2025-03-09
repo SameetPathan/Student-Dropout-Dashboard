@@ -24,7 +24,7 @@ import {
   FaSchool 
 } from "react-icons/fa";
 
-const StudentDashboard = () => {
+const StudentDashboard = (props) => {
   const [key, setKey] = useState("add");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -53,6 +53,7 @@ const StudentDashboard = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+    console.log("user={user}",props.user)
     fetchMessages();
   }, []);
 
@@ -151,24 +152,28 @@ const StudentDashboard = () => {
       const db = getDatabase();
       const studentsRef = ref(db, "StudentDropOut/studentDetails");
       const snapshot = await get(studentsRef);
-
+  
       if (snapshot.exists()) {
         const data = [];
         const messagesPromises = []; // Array to hold promises for fetching messages
-
+  
         snapshot.forEach((childSnapshot) => {
           const student = { id: childSnapshot.key, ...childSnapshot.val() };
-          data.push(student);
-
-          // Fetch messages for each student
-          messagesPromises.push(
-            fetchMessages(student.id).then((studentMessages) => ({
-              studentId: student.id,
-              messages: studentMessages,
-            }))
-          );
+          
+          // Filter students by who added them
+          if (student.addedby === props.user.email) {
+            data.push(student);
+  
+            // Fetch messages for each student
+            messagesPromises.push(
+              fetchMessages(student.id).then((studentMessages) => ({
+                studentId: student.id,
+                messages: studentMessages,
+              }))
+            );
+          }
         });
-
+  
         // Wait for all message fetching promises to resolve
         Promise.all(messagesPromises).then((messagesData) => {
           const newMessages = { ...messages };
@@ -177,7 +182,7 @@ const StudentDashboard = () => {
           });
           setMessages(newMessages);
         });
-
+  
         setStudentData(data.reverse()); // Show newest entries first
       } else {
         setStudentData([]);
@@ -197,13 +202,13 @@ const StudentDashboard = () => {
           db,
           `StudentDropOut/studentDetails/${editingId}`
         );
-        await update(studentRef, formData);
+        await update(studentRef, {...formData,addedby:props.user.email});
         showToastMessage("Student details updated successfully!");
         setEditingId(null);
       } else {
         // Add new record
         const studentsRef = ref(db, "StudentDropOut/studentDetails");
-        await push(studentsRef, formData);
+        await push(studentsRef, {...formData,addedby:props.user.email});
         showToastMessage("Student details added successfully!");
       }
 

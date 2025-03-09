@@ -140,7 +140,7 @@ function App() {
                   <ProtectedRoute
                     isAllowed={isAuthenticated && user?.userType === 'Student'}
                   >
-                    <StudentDashboard />
+                    <StudentDashboard user={user} />
                   </ProtectedRoute>
                 }
               />
@@ -150,7 +150,7 @@ function App() {
                   <ProtectedRoute
                     isAllowed={isAuthenticated && user?.userType === 'School'}
                   >
-                    <SchoolDashboard />
+                    <SchoolDashboard user={user}/>
                   </ProtectedRoute>
                 }
               />
