@@ -99,6 +99,7 @@ function App() {
             user={user}
             onLogout={handleLogout}
           />
+         
           <main style={{marginTop:"95px"}}>
             <Routes>
               {/* Home Route - Redirects authenticated users to their dashboard */}
@@ -159,6 +160,7 @@ function App() {
                 element={
                   <ProtectedRoute
                     isAllowed={isAuthenticated && user?.userType === 'Admin'}
+                    user={user}
                   >
                     <AdminDashboard />
                   </ProtectedRoute>
@@ -174,6 +176,7 @@ function App() {
               <p className="mb-0">&copy; 2024 Student Dropout Analysis. All rights reserved.</p>
             </div>
           </footer>
+        
         </div>
       </Router>
     </CookiesProvider>

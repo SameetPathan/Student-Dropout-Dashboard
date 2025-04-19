@@ -17,11 +17,69 @@ import {
   ComposedChart, Treemap
 } from 'recharts';
 
-const AdminDashboard = () => {
+const AdminDashboard = (props) => {
   const [key, setKey] = useState('students'); // Default tab
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
+
+
+  // Function to add dummy student data
+const addDummyStudentData = async () => {
+
+
+  const userEmail = props.user?.email || 'system@example.com';
+    // Define dummy student records
+  const dummyStudents = [
+    {
+      fullName: 'John Smith',
+      phoneNumber: '9876543210',
+      email: 'john.smith@example.com',
+      schoolName: 'Central High School',
+      course: 'Science',
+      year: '2023',
+      class: '10th',
+      address: '123 Main St, Central City',
+      familyMemberCount: '4',
+      reasonForDropout: 'Financial difficulties',
+      fatherOccupation: 'Factory worker',
+      gender: 'Male',
+      addedDate: '2023-07-15',
+      district: 'Central'
+    }
+  ];
+
+  try {
+    const db = getDatabase();
+    const studentsRef = ref(db, 'StudentDropOut/studentDetails');
+    
+    // Display loading toast
+    showToastMessage('Adding dummy student data...', 'info');
+    
+    // Add each student record to Firebase
+    const promises = dummyStudents.map(student => {
+      // Add the addedBy field to each student record
+      const studentWithAddedBy = {
+        ...student,
+        addedBy: userEmail
+      };
+      return push(studentsRef, studentWithAddedBy);
+    });
+    
+    // Wait for all records to be added
+    await Promise.all(promises);
+    
+    
+    // Show success message
+    showToastMessage(`Successfully added ${dummyStudents.length} dummy student records`, 'success');
+    
+    // Refresh the student data
+    fetchStudentData();
+  } catch (error) {
+    console.error("Error adding dummy data:", error);
+    showToastMessage('Error adding dummy student data', 'error');
+  }
+};
 
   // Students Data
   const [studentData, setStudentData] = useState([]);
@@ -761,6 +819,15 @@ const AdminDashboard = () => {
                             <Button variant="outline-secondary" onClick={resetForm}>
                               Reset Form
                             </Button>
+                            
+                            <Button 
+                            variant="outline-primary" 
+                            type="button" 
+                            onClick={addDummyStudentData}
+                          >
+                            <FaUsers className="me-2" />Add Dummy Data
+                          </Button>
+                          
                           </div>
                         </Col>
                       </Row>
@@ -785,9 +852,7 @@ const AdminDashboard = () => {
                       <FaSearch className="me-2" />Search
                     </Button>
                   </div>
-                  <Button variant="outline-success">
-                    <FaDownload className="me-2" />Export Users
-                  </Button>
+       
                 </div>
 
                 <div className="table-responsive">
@@ -1154,6 +1219,34 @@ const AdminDashboard = () => {
                           </Card.Body>
                         </Card>
                       </Col>
+
+                            <Col lg={12}>
+                        <Card className="border-0 shadow-sm h-100">
+                          <Card.Body>
+                            <h5 className="mb-4">Dropout Reasons by Class</h5>
+                            <ResponsiveContainer width="100%" height={400}>
+                              <BarChart data={chartData.address || []}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="class" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                {Object.keys(chartData.address || {}).map((reason, index) => (
+                                  <Bar 
+                                    key={`reason-${index}`}
+                                    dataKey={reason} 
+                                    stackId="a" 
+                                    fill={getChartColors(index)}
+                                    name={reason} 
+                                  />
+                                ))}
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </Card.Body>
+                        </Card>
+                      </Col>
+
+                      
                     </>
                   )}
                 </Row>
